@@ -17,6 +17,8 @@ export function blockedOn(s: SimState, p: number): number | null {
     if (holdsL !== holdsR) wanted = holdsL ? r : l;
   } else {
     const strat = STRATEGIES[strategy];
+    // Chandy–Misra yields held forks and Lehmann–Rabin backs off, so neither can form a wait-for cycle.
+    if (strat.protocol) return null;
     if (strat.usesWaiter && !ph.seated) return null; // waiting on the waiter, not a chopstick
     const [a, b] = strat.order(p, n);
     wanted = s.chopsticks[a] !== p ? a : s.chopsticks[b] !== p ? b : null;

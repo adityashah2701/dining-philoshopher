@@ -17,6 +17,8 @@ export interface StrategyInfo {
   /** Which Coffman condition the strategy removes. */
   breaks: CoffmanId | null;
   deadlockFree: boolean;
+  /** Overrides the generic starvation line on the Concepts page. */
+  starvation?: string;
   color: string;
   code: string;
 }
@@ -66,6 +68,41 @@ wait(stick[(i+1) % N])
 eat()
 signal(both sticks)
 signal(seats)`,
+  },
+  chandy: {
+    id: "chandy",
+    icon: "🧼",
+    name: "Clean & Dirty",
+    tagline: "Dirty sticks get handed over",
+    breaks: "nopreempt",
+    deadlockFree: true,
+    starvation: "✅ Starvation-free (paper)",
+    color: "#c77dff",
+    code: `// sticks start dirty, held by the
+// lower-numbered neighbour
+while hungry:
+  ask for each stick I lack
+on request(stick):
+  if eating or stick is clean: keep it
+  else: clean it, hand it over
+eat()  // sticks become dirty`,
+  },
+  lehmann: {
+    id: "lehmann",
+    icon: "🪙",
+    name: "Coin Flip",
+    tagline: "Random first stick, back off",
+    breaks: "hold",
+    deadlockFree: true,
+    starvation: "⚠️ Eats with probability 1",
+    color: "#ffd166",
+    code: `while hungry:
+  s = coin_flip(left, right)
+  wait(stick[s])
+  if free(other):
+    take(other); eat(); break
+  else:
+    put_down(stick[s])  // flip again`,
   },
 };
 

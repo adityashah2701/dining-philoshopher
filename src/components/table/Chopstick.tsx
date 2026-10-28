@@ -5,10 +5,12 @@ interface Props {
   id: number;
   n: number;
   owner: number | null;
+  /** Chandy–Misra only: a used stick is drawn darker until it changes hands. */
+  dirty?: boolean;
 }
 
 /** A chopstick slides from the table into its owner's hand (CSS stepped transition = pixel motion). */
-export function Chopstick({ id, n, owner }: Props) {
+export function Chopstick({ id, n, owner, dirty }: Props) {
   let angle: number;
   let r: number;
   if (owner === null) {
@@ -31,12 +33,13 @@ export function Chopstick({ id, n, owner }: Props) {
         transition: "transform 320ms steps(5)",
       }}
     >
-      <title>{`Chopstick C${id}${owner !== null ? ` · held by P${owner}` : " · free"}`}</title>
+      <title>{`Chopstick C${id}${owner !== null ? ` · held by P${owner}` : " · free"}${dirty ? " · dirty" : ""}`}</title>
       {glow && <rect x={-7} y={-28} width={14} height={56} fill={glow} opacity={0.55} />}
       <rect x={-4} y={-24} width={8} height={48} fill="#050612" />
       <rect x={-2} y={-22} width={4} height={44} fill="#c07a3e" />
       <rect x={-2} y={-22} width={2} height={44} fill="#e3a46a" />
       <rect x={-2} y={10} width={4} height={12} fill="#7a4520" />
+      {dirty && <rect x={-2} y={-22} width={4} height={44} fill="#050612" opacity={0.55} />}
     </g>
   );
 }

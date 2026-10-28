@@ -24,6 +24,8 @@ const PICK_LINE: Record<Sid, string> = {
   naive: "No rule change? Let's see how that goes…",
   waiter: "The waiter lets only 4 of 5 sit. Someone ALWAYS gets both sticks!",
   hierarchy: "Everyone grabs the LOWER-numbered stick first. Sartre reaches right, so the ring can't close!",
+  chandy: "Dirty sticks must be handed over when asked, clean ones are kept until you've eaten!",
+  lehmann: "Flip a coin for the first stick, and put it back if the second is busy!",
 };
 
 /** Level 3 — pick a power-up (strategy) and survive the dinner rush. */

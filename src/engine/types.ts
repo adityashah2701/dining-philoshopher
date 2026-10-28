@@ -8,7 +8,7 @@
 
 export type PState = "thinking" | "hungry" | "eating";
 
-export type StrategyId = "naive" | "hierarchy" | "waiter" | "manual";
+export type StrategyId = "naive" | "hierarchy" | "waiter" | "chandy" | "lehmann" | "manual";
 
 export interface Philosopher {
   id: number;
@@ -23,6 +23,8 @@ export interface Philosopher {
   seated: boolean;
   /** Ever crossed the starvation threshold. */
   starved: boolean;
+  /** Lehmann–Rabin only: the chopstick chosen (by coin flip) to be picked up first, or null to flip again. */
+  first: number | null;
 }
 
 export type SimEventType = "grab" | "release" | "eat" | "seat" | "deadlock" | "preempt";
@@ -52,6 +54,8 @@ export interface SimState {
   philosophers: Philosopher[];
   /** chopsticks[i] = id of the philosopher holding it, or null. Chopstick i is shared by P(i-1) and P(i). */
   chopsticks: (number | null)[];
+  /** Chandy–Misra only: dirty[i] is true while chopstick i has been used since it last changed hands. */
+  dirty: boolean[];
   rng: number;
   /** Philosopher ids forming the wait-for cycle, or null. */
   deadlock: number[] | null;

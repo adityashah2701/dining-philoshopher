@@ -88,7 +88,7 @@ export function DiningTable({ sim, onSeatClick, showGraph = false, children, cla
         {edges.length > 0 && <WaitForArrows edges={edges} cycle={sim.deadlock} n={n} />}
 
         {sim.chopsticks.map((owner, i) => (
-          <Chopstick key={i} id={i} n={n} owner={owner} />
+          <Chopstick key={i} id={i} n={n} owner={owner} dirty={sim.config.strategy === "chandy" && sim.dirty[i]} />
         ))}
 
         {sim.philosophers.map((ph) => (

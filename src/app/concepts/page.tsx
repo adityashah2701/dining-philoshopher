@@ -62,7 +62,7 @@ export default function ConceptsPage() {
                 <pre className="overflow-x-auto bg-edge p-3 text-[18px] leading-snug text-mint">{s.code}</pre>
                 <div className="flex flex-col gap-1 text-[20px]">
                   <span>{s.deadlockFree ? "✅ Deadlock-free" : "❌ Can deadlock"}</span>
-                  <span>{s.deadlockFree ? "⚠️ Starvation: rare, possible" : "💀 Starvation: yes"}</span>
+                  <span>{s.starvation ?? (s.deadlockFree ? "⚠️ Starvation: rare, possible" : "💀 Starvation: yes")}</span>
                   <span className="text-dim">
                     {breaks ? `Breaks ${breaks.icon} ${breaks.name}` : "Breaks nothing"}
                   </span>
