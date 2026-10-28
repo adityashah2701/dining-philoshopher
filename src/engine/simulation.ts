@@ -34,6 +34,7 @@ export function createSim(cfg: SimConfig): SimState {
       seated: false,
       starved: false,
       first: null,
+      flips: 0,
     });
   }
 
@@ -125,6 +126,7 @@ function freeChoice(s: SimState, ph: Philosopher) {
     let coin: number;
     [coin, s.rng] = nextRandom(s.rng);
     ph.first = coin < 0.5 ? l : r;
+    ph.flips++;
   }
   if (s.chopsticks[ph.first] !== ph.id) {
     if (s.chopsticks[ph.first] === null) {

@@ -156,6 +156,27 @@ svg.pixelated,
   }
 }
 
+.coinflip {
+  animation: coinflip 0.8s steps(8) 1;
+}
+@keyframes coinflip {
+  0% {
+    transform: translateY(0) scaleX(1);
+  }
+  25% {
+    transform: translateY(-16px) scaleX(-1);
+  }
+  50% {
+    transform: translateY(-24px) scaleX(1);
+  }
+  75% {
+    transform: translateY(-14px) scaleX(-1);
+  }
+  100% {
+    transform: translateY(0) scaleX(1);
+  }
+}
+
 .float {
   animation: float 2.4s steps(6) infinite;
 }
@@ -179,6 +200,7 @@ svg.pixelated,
   .blink,
   .bob,
   .jitter,
+  .coinflip,
   .float {
     animation: none;
   }

@@ -25,6 +25,8 @@ export interface Philosopher {
   starved: boolean;
   /** Lehmann–Rabin only: the chopstick chosen (by coin flip) to be picked up first, or null to flip again. */
   first: number | null;
+  /** Lehmann–Rabin only: coin flips so far (lets the UI replay the flip animation). */
+  flips: number;
 }
 
 export type SimEventType = "grab" | "release" | "eat" | "seat" | "deadlock" | "preempt";

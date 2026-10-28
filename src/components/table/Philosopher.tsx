@@ -9,6 +9,8 @@ interface Props {
   starveAt: number;
   manual: boolean;
   inCycle: boolean;
+  /** Show the Lehmann–Rabin coin. */
+  coin?: boolean;
   onClick?: (id: number) => void;
 }
 
@@ -28,7 +30,7 @@ function moodOf(ph: P, starveAt: number, manual: boolean): Mood {
 
 const SEGMENTS = 6;
 
-export function Philosopher({ ph, n, starveAt, manual, inCycle, onClick }: Props) {
+export function Philosopher({ ph, n, starveAt, manual, inCycle, coin, onClick }: Props) {
   const { x, y } = polar(seatAngle(ph.id, n), R_SEAT);
   const mood = moodOf(ph, starveAt, manual);
   const look = LOOKS[ph.id % LOOKS.length];
@@ -74,6 +76,21 @@ export function Philosopher({ ph, n, starveAt, manual, inCycle, onClick }: Props
       <text x={0} y={-62} textAnchor="middle" fontSize={20}>
         {BADGE[mood]}
       </text>
+
+      {coin && ph.state === "hungry" && ph.first !== null && (
+        // key = flip count, so every new flip restarts the spin
+        <g transform="translate(-46 -24) scale(1.5)">
+          <g key={ph.flips} className="coinflip" style={{ transformBox: "fill-box", transformOrigin: "center" }}>
+            <title>{`Coin says: ${ph.first === ph.id ? "LEFT" : "RIGHT"} stick first`}</title>
+            <rect x={-12} y={-12} width={24} height={24} fill="#050612" />
+            <rect x={-10} y={-10} width={20} height={20} fill="#ffd166" />
+            <rect x={-10} y={-10} width={20} height={4} fill="#fff3b0" />
+            <text x={0} y={5} textAnchor="middle" fontSize={11} fill="#050612" style={{ fontFamily: "var(--font-press)" }}>
+              {ph.first === ph.id ? "L" : "R"}
+            </text>
+          </g>
+        </g>
+      )}
 
       <g className={anim}>
         <PixelSprite rows={philosopherSprite(mood)} colors={palette(look, mood)} x={-24} y={-30} />

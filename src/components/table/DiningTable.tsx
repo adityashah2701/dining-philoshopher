@@ -99,6 +99,7 @@ export function DiningTable({ sim, onSeatClick, showGraph = false, children, cla
             starveAt={starveAt}
             manual={manual}
             inCycle={cycle.has(ph.id)}
+            coin={strategy === "lehmann"}
             onClick={onSeatClick}
           />
         ))}
