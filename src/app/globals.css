@@ -1,26 +1,208 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ── Pixel Diner palette ───────────────────────────── */
+@theme {
+  --color-night: #0e1024;
+  --color-deep: #161a3a;
+  --color-panel: #1f2550;
+  --color-edge: #050612;
+  --color-ink: #f6ecd2;
+  --color-dim: #8d92c4;
+  --color-noodle: #ffb347;
+  --color-wood: #c07a3e;
+  --color-mint: #5ef2a8;
+  --color-amber: #ffd23f;
+  --color-blood: #ff4d6d;
+  --color-violet: #8b7cff;
+  --color-sky: #4cc9f0;
+
+  --font-pixel: var(--font-press), monospace;
+  --font-body: var(--font-vt), monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  background: var(--color-night);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 22px;
+  line-height: 1.2;
+  -webkit-font-smoothing: none;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100dvh;
+  background-image:
+    radial-gradient(circle at 50% 30%, #1d2152 0%, transparent 60%),
+    linear-gradient(transparent 31px, #ffffff06 32px),
+    linear-gradient(90deg, transparent 31px, #ffffff06 32px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+}
+
+svg.pixelated,
+.pixelated {
+  image-rendering: pixelated;
+  shape-rendering: crispEdges;
+}
+
+/* ── Chunky pixel frames (notched corners via stacked shadows) ── */
+.px-frame {
+  background: var(--color-panel);
+  box-shadow:
+    0 -4px 0 0 var(--color-edge),
+    0 4px 0 0 var(--color-edge),
+    -4px 0 0 0 var(--color-edge),
+    4px 0 0 0 var(--color-edge),
+    inset 0 4px 0 0 #ffffff14,
+    inset 0 -4px 0 0 #00000040;
+}
+
+.px-btn {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  background: var(--btn, var(--color-noodle));
+  color: var(--color-edge);
+  cursor: pointer;
+  user-select: none;
+  box-shadow:
+    0 -4px 0 0 var(--color-edge),
+    0 4px 0 0 var(--color-edge),
+    -4px 0 0 0 var(--color-edge),
+    4px 0 0 0 var(--color-edge),
+    inset 0 -6px 0 0 #00000038,
+    inset 0 4px 0 0 #ffffff55;
+  transition: transform 60ms steps(2);
+}
+.px-btn:hover {
+  filter: brightness(1.08);
+}
+.px-btn:active,
+.px-btn[aria-pressed="true"] {
+  transform: translateY(3px);
+  box-shadow:
+    0 -4px 0 0 var(--color-edge),
+    0 4px 0 0 var(--color-edge),
+    -4px 0 0 0 var(--color-edge),
+    4px 0 0 0 var(--color-edge),
+    inset 0 4px 0 0 #00000038;
+}
+.px-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+.px-btn:focus-visible {
+  outline: 3px dashed var(--color-ink);
+  outline-offset: 7px;
+}
+
+/* ── CRT overlay ── */
+.crt::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    #00000026 3px,
+    transparent 4px
+  );
+}
+.crt::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 61;
+  background: radial-gradient(ellipse at center, transparent 55%, #00000099 100%);
+}
+
+.glow {
+  text-shadow:
+    0 0 6px currentColor,
+    4px 4px 0 var(--color-edge);
+}
+
+.blink {
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.bob {
+  animation: bob 0.5s steps(2) infinite;
+}
+@keyframes bob {
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.jitter {
+  animation: jitter 0.3s steps(2) infinite;
+}
+@keyframes jitter {
+  50% {
+    transform: translateX(2px);
+  }
+}
+
+.float {
+  animation: float 2.4s steps(6) infinite;
+}
+@keyframes float {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.marching {
+  animation: march 0.6s steps(4) infinite;
+}
+@keyframes march {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marching,
+  .blink,
+  .bob,
+  .jitter,
+  .float {
+    animation: none;
+  }
+}
+
+input[type="range"].px-range {
+  appearance: none;
+  height: 12px;
+  background: var(--color-deep);
+  box-shadow: 0 0 0 4px var(--color-edge);
+}
+input[type="range"].px-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 24px;
+  background: var(--color-noodle);
+  box-shadow: 0 0 0 4px var(--color-edge);
+  cursor: pointer;
+}
+input[type="range"].px-range::-moz-range-thumb {
+  width: 18px;
+  height: 24px;
+  border: none;
+  border-radius: 0;
+  background: var(--color-noodle);
+  box-shadow: 0 0 0 4px var(--color-edge);
 }
