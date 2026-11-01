@@ -2,7 +2,7 @@ export interface LevelInfo {
   id: number;
   icon: string;
   title: string;
-  /** What the player does, in one glance. */
+  // level action
   verb: "PLAY" | "WATCH" | "CHOOSE";
   goal: string;
 }
@@ -13,10 +13,10 @@ export const LEVELS: LevelInfo[] = [
   { id: 3, icon: "🛡", title: "Fix the Dinner", verb: "CHOOSE", goal: "Survive the rush" },
 ];
 
-/** Level 3 survival length, in ticks. */
+// survival ticks
 export const SURVIVE_TICKS = 80;
 
-/** Level 1 star thresholds, in ticks. */
+// star thresholds
 export function level1Stars(ticks: number) {
   return ticks <= 20 ? 3 : ticks <= 32 ? 2 : 1;
 }

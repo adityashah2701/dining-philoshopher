@@ -1,10 +1,4 @@
-/**
- * OS mapping used throughout the engine:
- *   Philosopher  → process / thread
- *   Chopstick    → mutex-protected resource
- *   Eating       → critical section (needs BOTH resources)
- *   Strategy     → synchronization policy
- */
+// engine types
 
 export type PState = "thinking" | "hungry" | "eating";
 
@@ -13,19 +7,19 @@ export type StrategyId = "naive" | "hierarchy" | "waiter" | "chandy" | "lehmann"
 export interface Philosopher {
   id: number;
   state: PState;
-  /** Ticks left in the current thinking/eating phase. */
+  // phase timer
   timer: number;
-  /** Ticks spent waiting in the current hungry phase. */
+  // wait timer
   wait: number;
   meals: number;
   maxWait: number;
-  /** Waiter strategy only: holds one of the N-1 seats. */
+  // seated status
   seated: boolean;
-  /** Ever crossed the starvation threshold. */
+  // starved status
   starved: boolean;
-  /** Lehmann–Rabin only: the chopstick chosen (by coin flip) to be picked up first, or null to flip again. */
+  // first stick
   first: number | null;
-  /** Lehmann–Rabin only: coin flips so far (lets the UI replay the flip animation). */
+  // flip count
   flips: number;
 }
 
@@ -40,13 +34,13 @@ export interface SimConfig {
   n: number;
   strategy: StrategyId;
   seed?: number;
-  /** [min, max] ticks spent thinking. */
+  // think range
   think?: [number, number];
-  /** [min, max] ticks spent eating. */
+  // eat range
   eat?: [number, number];
-  /** Wait ticks after which a philosopher counts as starving. */
+  // starve threshold
   starveAt?: number;
-  /** Everyone sits down hungry at tick 0 (the "dinner bell"). */
+  // start hungry
   startHungry?: boolean;
 }
 
@@ -54,16 +48,16 @@ export interface SimState {
   config: Required<SimConfig>;
   tick: number;
   philosophers: Philosopher[];
-  /** chopsticks[i] = id of the philosopher holding it, or null. Chopstick i is shared by P(i-1) and P(i). */
+  // stick owners
   chopsticks: (number | null)[];
-  /** Chandy–Misra only: dirty[i] is true while chopstick i has been used since it last changed hands. */
+  // dirty sticks
   dirty: boolean[];
   rng: number;
-  /** Philosopher ids forming the wait-for cycle, or null. */
+  // cycle ids
   deadlock: number[] | null;
   deadlockCount: number;
   everDeadlocked: boolean;
-  /** Events emitted during the most recent tick/action (drives sound + effects). */
+  // sim events
   events: SimEvent[];
 }
 

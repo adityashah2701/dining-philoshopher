@@ -9,7 +9,7 @@ interface Props {
   starveAt: number;
   manual: boolean;
   inCycle: boolean;
-  /** Show the Lehmann–Rabin coin. */
+  // lehmann coin
   coin?: boolean;
   onClick?: (id: number) => void;
 }
@@ -78,7 +78,7 @@ export function Philosopher({ ph, n, starveAt, manual, inCycle, coin, onClick }:
       </text>
 
       {coin && ph.state === "hungry" && ph.first !== null && (
-        // key = flip count, so every new flip restarts the spin
+        // spin restart
         <g transform="translate(-46 -24) scale(1.5)">
           <g key={ph.flips} className="coinflip" style={{ transformBox: "fill-box", transformOrigin: "center" }}>
             <title>{`Coin says: ${ph.first === ph.id ? "LEFT" : "RIGHT"} stick first`}</title>

@@ -14,7 +14,7 @@ function Stat({ icon, label, value, tone }: { icon: string; label: string; value
   );
 }
 
-/** Live numbers + a pixel bar chart of meals per philosopher (fairness at a glance). */
+// stats panel
 export function StatsPanel({ sim }: { sim: SimState }) {
   const meals = sim.philosophers.map((p) => p.meals);
   const total = meals.reduce((a, b) => a + b, 0);

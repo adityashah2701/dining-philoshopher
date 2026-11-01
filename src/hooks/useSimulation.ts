@@ -50,7 +50,7 @@ const SFX_PRIORITY: [SimState["events"][number]["type"], Sfx][] = [
   ["grab", "grab"],
 ];
 
-/** React adapter around the pure engine: owns the clock, speed and sound. */
+// sim controller
 export function useSimulation(config: SimConfig, opts: { autoPlay?: boolean; baseMs?: number } = {}) {
   const { autoPlay = false, baseMs = 450 } = opts;
   const [state, dispatch] = useReducer(reducer, undefined, () => ({
@@ -65,7 +65,7 @@ export function useSimulation(config: SimConfig, opts: { autoPlay?: boolean; bas
     return () => clearInterval(id);
   }, [state.playing, state.speed, baseMs]);
 
-  // One sound per tick: the most important thing that happened.
+  // play sound
   useEffect(() => {
     const types = new Set(state.sim.events.map((e) => e.type));
     const hit = SFX_PRIORITY.find(([t]) => types.has(t));

@@ -5,19 +5,14 @@ import { waiter } from "./waiter";
 import { chandy } from "./chandy";
 import { lehmann } from "./lehmann";
 
-/**
- * A strategy decides the ORDER in which a philosopher acquires its two
- * chopsticks, and whether it must first get permission from a waiter.
- * The engine acquires one resource per tick so the "holding one" moment
- * (hold-and-wait) is visible.
- */
+// strategy contract
 export interface Strategy {
   id: Exclude<StrategyId, "manual">;
-  /** Chopstick ids in acquisition order for philosopher p. */
+  // stick order
   order(p: number, n: number): [number, number];
-  /** Must hold one of the N-1 waiter seats before picking up chopsticks. */
+  // waiter guard
   usesWaiter: boolean;
-  /** Strategies that follow their own protocol instead of "order, one stick per tick". */
+  // custom protocol
   protocol?: "chandy" | "lehmann";
 }
 

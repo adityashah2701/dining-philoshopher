@@ -26,9 +26,15 @@ export default function SandboxPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-center font-pixel text-[14px] text-noodle glow sm:text-[18px]">🧪 SANDBOX LAB</h1>
+      <div className="flex flex-col items-center gap-1 text-center">
+        <h1 className="font-pixel text-[14px] text-noodle glow sm:text-[18px]">🧪 SANDBOX LAB</h1>
+        <p className="font-pixel text-[9px] text-dim">
+          Experiment with 5 OS synchronization algorithms, adjust table size, trigger race conditions, or preempt deadlocks!
+        </p>
+      </div>
 
-      <div className="mx-auto grid w-full max-w-2xl grid-cols-3 gap-4 px-1">
+      {/* 5-Strategy Grid */}
+      <div className="mx-auto grid w-full max-w-5xl grid-cols-2 gap-3 px-1 sm:grid-cols-3 lg:grid-cols-5">
         {(Object.keys(STRATEGY_INFO) as Sid[]).map((id) => (
           <StrategyCard
             key={id}
@@ -62,9 +68,9 @@ export default function SandboxPage() {
               className="px-btn"
               style={{ "--btn": "#ff8fd1" } as React.CSSProperties}
               onClick={ctl.bell}
-              title="Make every thinking philosopher hungry at once"
+              title="Force all thinking philosophers to become hungry simultaneously"
             >
-              🔔 Bell
+              🔔 Dinner Bell
             </button>
           </Controls>
         </div>
@@ -90,14 +96,14 @@ export default function SandboxPage() {
               />
             </label>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <label className="flex cursor-pointer items-center gap-2 text-[20px]">
+              <label className="flex cursor-pointer items-center gap-2 text-[19px]">
                 <input type="checkbox" checked={graph} onChange={(e) => setGraph(e.target.checked)} className="h-4 w-4 accent-amber" />
-                ➰ Wait-for arrows
+                <span>➰ Wait-for graph</span>
               </label>
               <button
                 className="px-btn !px-3"
                 style={{ "--btn": "#8b7cff" } as React.CSSProperties}
-                title="New random seed"
+                title="Randomize simulation seed"
                 onClick={() => {
                   const s = Math.floor(Math.random() * 1e6);
                   setSeed(s);
@@ -118,20 +124,23 @@ export default function SandboxPage() {
 
 function Legend() {
   const items = [
-    ["💭", "Thinking"],
-    ["😤", "Hungry"],
-    ["😋", "Eating"],
-    ["💀", "Starving"],
-    ["▬", "Hunger bar"],
-    ["➰", "Waits for"],
+    { label: "Thinking", desc: "Process idle", color: "#8d92c4" },
+    { label: "Hungry", desc: "Requesting mutex", color: "#ffb347" },
+    { label: "Eating", desc: "In critical section", color: "#5ef2a8" },
+    { label: "Deadlocked", desc: "Circular wait cycle", color: "#ff4d6d" },
   ];
+
   return (
-    <div className="grid grid-cols-2 gap-x-3 gap-y-1 px-1 text-[19px] text-dim">
-      {items.map(([i, l]) => (
-        <span key={l}>
-          {i} {l}
-        </span>
-      ))}
+    <div className="px-frame flex flex-col gap-2 p-3 font-pixel text-[9px]">
+      <span className="text-dim">STATE LEGEND:</span>
+      <div className="grid grid-cols-2 gap-2">
+        {items.map((item) => (
+          <div key={item.label} className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full" style={{ background: item.color }} />
+            <span style={{ color: item.color }}>{item.label}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

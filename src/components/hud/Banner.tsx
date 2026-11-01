@@ -12,7 +12,7 @@ interface Props {
 
 const TONES = { red: "#ff4d6d", mint: "#5ef2a8", amber: "#ffd23f" };
 
-/** Arcade-style banner that drops onto the table. */
+// arcade banner
 export function Banner({ show, tone, title, icon, children }: Props) {
   return (
     <AnimatePresence>

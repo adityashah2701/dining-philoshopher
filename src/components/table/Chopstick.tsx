@@ -5,11 +5,11 @@ interface Props {
   id: number;
   n: number;
   owner: number | null;
-  /** Chandy–Misra only: a used stick is drawn darker until it changes hands. */
+  // chandy state
   dirty?: boolean;
 }
 
-/** A chopstick slides from the table into its owner's hand (CSS stepped transition = pixel motion). */
+// chopstick sprite
 export function Chopstick({ id, n, owner, dirty }: Props) {
   let angle: number;
   let r: number;
@@ -17,7 +17,7 @@ export function Chopstick({ id, n, owner, dirty }: Props) {
     angle = stickAngle(id, n);
     r = R_FREE_STICK;
   } else {
-    // Stick i is on P(i)'s counter-clockwise side and P(i-1)'s clockwise side.
+    // stick placement
     const side = owner === id ? -1 : 1;
     angle = seatAngle(owner, n) + side * Math.min(16, 150 / n);
     r = R_HELD;

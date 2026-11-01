@@ -1,4 +1,4 @@
-/** Pixel-art data. Each char is one pixel; "." is transparent. */
+// sprite data
 
 export type Mood = "thinking" | "hungry" | "eating" | "starving" | "full";
 

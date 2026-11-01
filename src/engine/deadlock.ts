@@ -2,7 +2,7 @@ import type { SimState } from "./types";
 import { left, right } from "./types";
 import { STRATEGIES } from "./strategies";
 
-/** The chopstick philosopher p is currently blocked on, or null if not blocked on one. */
+// blocked stick
 export function blockedOn(s: SimState, p: number): number | null {
   const ph = s.philosophers[p];
   if (ph.state !== "hungry") return null;
@@ -17,7 +17,7 @@ export function blockedOn(s: SimState, p: number): number | null {
     if (holdsL !== holdsR) wanted = holdsL ? r : l;
   } else {
     const strat = STRATEGIES[strategy];
-    // Chandy–Misra yields held forks and Lehmann–Rabin backs off, so neither can form a wait-for cycle.
+    // cycle immunity
     if (strat.protocol) return null;
     if (strat.usesWaiter && !ph.seated) return null; // waiting on the waiter, not a chopstick
     const [a, b] = strat.order(p, n);
@@ -29,7 +29,7 @@ export function blockedOn(s: SimState, p: number): number | null {
   return holder !== null && holder !== p ? wanted : null;
 }
 
-/** Wait-for graph edges: p → q means p waits for a chopstick held by q. */
+// wait edges
 export function waitForEdges(s: SimState): [number, number][] {
   const edges: [number, number][] = [];
   for (let p = 0; p < s.config.n; p++) {
@@ -39,10 +39,7 @@ export function waitForEdges(s: SimState): [number, number][] {
   return edges;
 }
 
-/**
- * Each philosopher waits on at most one other, so the wait-for graph is a
- * functional graph: follow edges and look for a repeat.
- */
+// cycle detector
 export function findCycle(s: SimState): number[] | null {
   const next = new Map(waitForEdges(s));
   for (const start of next.keys()) {

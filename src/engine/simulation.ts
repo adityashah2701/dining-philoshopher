@@ -12,7 +12,7 @@ const DEFAULTS = {
   startHungry: false,
 };
 
-/** Manual-mode philosophers stay full after one meal. */
+// manual duration
 const FOREVER = 1e9;
 
 export function createSim(cfg: SimConfig): SimState {
@@ -52,16 +52,12 @@ export function createSim(cfg: SimConfig): SimState {
   };
 }
 
-/**
- * Chandy–Misra starts with every stick dirty and placed so the precedence graph
- * is acyclic: stick c (shared by P(c-1) and P(c)) goes to the lower-numbered one.
- * Every other strategy starts with all sticks on the table.
- */
+// initial sticks
 function initialChopsticks(n: number, strategy: SimConfig["strategy"]): (number | null)[] {
   return Array.from({ length: n }, (_, c) => (strategy === "chandy" ? Math.max(c - 1, 0) : null));
 }
 
-/** Shallow-clone the mutable parts so React sees a new state. */
+// clone state
 function clone(s: SimState): SimState {
   return {
     ...s,
@@ -96,11 +92,7 @@ function startEating(s: SimState, ph: Philosopher) {
   s.events.push({ type: "eat", p: ph.id });
 }
 
-/**
- * Chandy–Misra: ask for each stick we lack. The holder hands it over (cleaned)
- * only if it is dirty and the holder is not eating; a clean stick is kept until
- * its holder has eaten. One hand-over per tick keeps the moves visible.
- */
+// request stick
 function requestStick(s: SimState, ph: Philosopher) {
   const { n } = s.config;
   for (const c of [left(ph.id, n), right(ph.id, n)]) {
@@ -114,10 +106,7 @@ function requestStick(s: SimState, ph: Philosopher) {
   }
 }
 
-/**
- * Lehmann–Rabin: coin-flip the first stick and wait for it; then try the other
- * once. If it is busy, put the first one down and flip again next tick.
- */
+// coin choice
 function freeChoice(s: SimState, ph: Philosopher) {
   const { n } = s.config;
   const l = left(ph.id, n);
@@ -146,7 +135,7 @@ function freeChoice(s: SimState, ph: Philosopher) {
   }
 }
 
-/** Recompute the deadlock flag after any change. */
+// settle state
 function settle(s: SimState): SimState {
   const cycle = findCycle(s);
   if (cycle && !s.deadlock) {
@@ -158,14 +147,14 @@ function settle(s: SimState): SimState {
   return s;
 }
 
-/** Advance the world by one time step. Pure: returns a new state. */
+// step tick
 export function tick(prev: SimState): SimState {
   const s = clone(prev);
   const { n, strategy, think, starveAt } = s.config;
   const protocol = strategy === "manual" ? undefined : STRATEGIES[strategy].protocol;
   s.tick++;
 
-  // Rotate who acts first each tick so no seat is permanently favoured.
+  // rotate order
   for (let k = 0; k < n; k++) {
     const ph = s.philosophers[(k + s.tick) % n];
 
@@ -179,7 +168,7 @@ export function tick(prev: SimState): SimState {
 
     if (ph.state === "eating") {
       if (--ph.timer <= 0) {
-        // Chandy–Misra philosophers keep their (now dirty) sticks until asked.
+        // retain dirty
         if (protocol !== "chandy") releaseAll(s, ph.id);
         ph.meals++;
         ph.state = "thinking";
@@ -190,7 +179,7 @@ export function tick(prev: SimState): SimState {
       continue;
     }
 
-    // hungry
+    // hungry state
     ph.wait++;
     ph.maxWait = Math.max(ph.maxWait, ph.wait);
     if (ph.wait >= starveAt) ph.starved = true;
@@ -209,7 +198,7 @@ export function tick(prev: SimState): SimState {
         continue;
       }
 
-      // Acquire at most one chopstick per tick (makes hold-and-wait visible).
+      // acquire stick
       const [a, b] = strat.order(ph.id, n);
       const target = s.chopsticks[a] !== ph.id ? a : s.chopsticks[b] !== ph.id ? b : null;
       if (target !== null && s.chopsticks[target] === null) {
@@ -223,10 +212,7 @@ export function tick(prev: SimState): SimState {
   return settle(s);
 }
 
-/**
- * Manual mode click: grab any free neighbouring chopsticks; if nothing could
- * be grabbed, put down what you hold (voluntary release).
- */
+// manual click
 export function manualToggle(prev: SimState, p: number): SimState {
   const ph = prev.philosophers[p];
   if (ph.state !== "hungry") return prev;
@@ -246,7 +232,7 @@ export function manualToggle(prev: SimState, p: number): SimState {
   return settle(s);
 }
 
-/** Dinner bell: every thinking philosopher becomes hungry right now. */
+// ring bell
 export function ringBell(prev: SimState): SimState {
   const s = clone(prev);
   for (const ph of s.philosophers) {
@@ -259,10 +245,7 @@ export function ringBell(prev: SimState): SimState {
   return s;
 }
 
-/**
- * Deadlock recovery by preemption: force one philosopher in the cycle to drop
- * its chopsticks (breaks the No-Preemption condition).
- */
+// preempt victim
 export function preempt(prev: SimState): SimState {
   if (!prev.deadlock) return prev;
   const s = clone(prev);

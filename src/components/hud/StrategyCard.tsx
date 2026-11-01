@@ -8,7 +8,7 @@ interface Props {
   hideVerdict?: boolean;
 }
 
-/** A "power-up" card for a synchronization strategy. */
+// strategy card
 export function StrategyCard({ info, selected, onClick, compact, hideVerdict }: Props) {
   const breaks = COFFMAN.find((c) => c.id === info.breaks);
   return (

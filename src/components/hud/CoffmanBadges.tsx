@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { COFFMAN, type CoffmanId } from "@/content/concepts";
 
-/** The four Coffman conditions. `broken` is crossed out, `glow` is highlighted. */
+// coffman badges
 export function CoffmanBadges({ glow, broken }: { glow?: CoffmanId | null; broken?: CoffmanId | null }) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

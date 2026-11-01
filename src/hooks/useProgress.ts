@@ -13,7 +13,7 @@ function load(): Stars {
   }
 }
 
-/** Best star rating per level, kept in this browser only. */
+// progress store
 export function useProgress() {
   const [stars, setStars] = useState<Stars>({});
 
@@ -29,5 +29,14 @@ export function useProgress() {
     setStars(next);
   }, []);
 
-  return { stars, award };
+  const clear = useCallback(() => {
+    try {
+      localStorage.removeItem(KEY);
+    } catch {}
+    setStars({});
+  }, []);
+
+  const totalStars = Object.values(stars).reduce((acc, curr) => acc + curr, 0);
+
+  return { stars, award, clear, totalStars };
 }

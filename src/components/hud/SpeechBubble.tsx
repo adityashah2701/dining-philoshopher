@@ -18,7 +18,7 @@ const CHEF = [
 ];
 const CHEF_COLORS = { W: "#f6ecd2", K: "#8d92c4", S: "#f2c28b", E: "#14142a", M: "#5a2a1a", R: "#ff4d6d" };
 
-/** The chef narrator, with a typewriter line. */
+// narrator bubble
 export function SpeechBubble({ text }: { text: string }) {
   const [shown, setShown] = useState(0);
 

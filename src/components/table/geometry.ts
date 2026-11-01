@@ -8,7 +8,7 @@ export const R_BOWL = 94;
 export const R_FREE_STICK = 96;
 
 export const seatAngle = (i: number, n: number) => -90 + (i * 360) / n;
-/** Chopstick i is P(i)'s left stick, shared with P(i-1): it lies between them. */
+// stick position
 export const stickAngle = (i: number, n: number) => seatAngle(i, n) - 180 / n;
 
 export function polar(deg: number, r: number) {
@@ -16,7 +16,7 @@ export function polar(deg: number, r: number) {
   return { x: C + r * Math.cos(a), y: C + r * Math.sin(a) };
 }
 
-/** Rows of rects approximating a filled circle on an 8px grid. */
+// table geometry
 export function pixelCircle(r: number, step = 8) {
   const rows: { x: number; y: number; w: number }[] = [];
   for (let y = -r; y < r; y += step) {

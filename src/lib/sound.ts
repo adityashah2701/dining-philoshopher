@@ -1,4 +1,4 @@
-/** Tiny 8-bit sound effects with WebAudio square waves. No audio files. */
+// 8bit audio
 
 export type Sfx = "grab" | "eat" | "deadlock" | "win" | "click" | "preempt" | "lose";
 

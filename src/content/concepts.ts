@@ -14,10 +14,10 @@ export interface StrategyInfo {
   icon: string;
   name: string;
   tagline: string;
-  /** Which Coffman condition the strategy removes. */
+  // broken condition
   breaks: CoffmanId | null;
   deadlockFree: boolean;
-  /** Overrides the generic starvation line on the Concepts page. */
+  // starvation note
   starvation?: string;
   color: string;
   code: string;
@@ -79,7 +79,7 @@ signal(seats)`,
     starvation: "✅ Starvation-free (paper)",
     color: "#c77dff",
     code: `// sticks start dirty, held by the
-// lower-numbered neighbour
+// initial holder
 while hungry:
   ask for each stick I lack
 on request(stick):

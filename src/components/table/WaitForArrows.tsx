@@ -6,7 +6,7 @@ interface Props {
   n: number;
 }
 
-/** Wait-for graph: arrow p → q means "p is waiting for something q holds". */
+// wait arrows
 export function WaitForArrows({ edges, cycle, n }: Props) {
   const inCycle = new Set(cycle ?? []);
   return (
@@ -24,7 +24,7 @@ export function WaitForArrows({ edges, cycle, n }: Props) {
         const b = seatAngle(q, n);
         const from = polar(a, 158);
         const to = polar(b, 158);
-        // Bend the curve toward the table centre.
+        // curve bend
         let mid = (a + b) / 2;
         if (Math.abs(a - b) > 180) mid += 180;
         const ctrl = polar(mid, 110);

@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { DiningTable } from "@/components/table/DiningTable";
 import { Banner } from "@/components/hud/Banner";
-import { CoffmanBadges } from "@/components/hud/CoffmanBadges";
 import { StrategyCard } from "@/components/hud/StrategyCard";
 import { useSimulation } from "@/hooks/useSimulation";
 import { useProgress } from "@/hooks/useProgress";
@@ -15,22 +14,24 @@ import type { SimConfig } from "@/engine";
 import { LevelShell, NextButton, StarRow } from "./LevelShell";
 
 type Sid = StrategyInfo["id"];
-// Card order: trap in the middle so it isn't the obvious first/last pick.
-const CARDS: Sid[] = ["waiter", "naive", "hierarchy"];
+// card order
+const BASIC_CARDS: Sid[] = ["waiter", "naive", "hierarchy"];
+const ALL_CARDS: Sid[] = ["naive", "hierarchy", "waiter", "chandy", "lehmann"];
 
 const configFor = (strategy: Sid): SimConfig => ({ n: 5, strategy, startHungry: true, seed: 11 });
 
 const PICK_LINE: Record<Sid, string> = {
-  naive: "No rule change? Let's see how that goes…",
-  waiter: "The waiter lets only 4 of 5 sit. Someone ALWAYS gets both sticks!",
-  hierarchy: "Everyone grabs the LOWER-numbered stick first. Sartre reaches right, so the ring can't close!",
-  chandy: "Dirty sticks must be handed over when asked, clean ones are kept until you've eaten!",
-  lehmann: "Flip a coin for the first stick, and put it back if the second is busy!",
+  naive: "No rule change? Everyone grabs left first… let's see how long that lasts!",
+  waiter: "The Waiter permits at most 4 to sit! By pigeonhole principle, someone ALWAYS gets both sticks.",
+  hierarchy: "Numbered Sticks: lower number first! The circle cannot close because the last philosopher grabs opposite!",
+  chandy: "Chandy-Misra: Dirty sticks are yielded on request, clean sticks are retained until eaten!",
+  lehmann: "Lehmann-Rabin: Flip a coin for the first stick, and back off immediately if the second is occupied!",
 };
 
-/** Level 3 — pick a power-up (strategy) and survive the dinner rush. */
+// level 3
 export function Level3() {
   const [pick, setPick] = useState<Sid | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const ctl = useSimulation(configFor("waiter"), { baseMs: 300 });
   const { sim } = ctl;
   const { award } = useProgress();
@@ -59,12 +60,14 @@ export function Level3() {
 
   const progress = Math.min(1, sim.tick / SURVIVE_TICKS);
   const line = !pick
-    ? "Dinner rush! Everyone is starving. Pick a power-up to keep the table moving."
+    ? "Dinner rush! Everyone is starving. Pick a power-up strategy to keep the table flowing smoothly."
     : won
-      ? "Dinner saved! Your rule broke one of the 4 deadlock conditions."
+      ? "Dinner saved! Your rule defeated one of the 4 deadlock conditions. Table never locked!"
       : lost
-        ? "Dinner ruined! That rule lets the circle of waiting form. Try another card."
+        ? "Dinner ruined! That rule allowed a cycle of waiting to form. Try another strategy."
         : PICK_LINE[pick];
+
+  const cardsToDisplay = showAdvanced ? ALL_CARDS : BASIC_CARDS;
 
   return (
     <LevelShell
@@ -79,17 +82,39 @@ export function Level3() {
               style={{ width: `${progress * 100}%`, background: lost ? "#ff4d6d" : "#5ef2a8" }}
             />
           </div>
+          <span className="font-pixel text-[9px] text-dim">{Math.round(progress * 100)}%</span>
         </div>
       }
     >
       {!pick ? (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-3 gap-4 py-2 sm:gap-6">
-          {CARDS.map((id, i) => (
-            <motion.div key={id} initial={{ y: 40, rotate: (i - 1) * 6 }} animate={{ y: 0, rotate: (i - 1) * 3 }} transition={{ delay: i * 0.1 }}>
-              <StrategyCard info={STRATEGY_INFO[id]} hideVerdict onClick={() => choose(id)} />
-            </motion.div>
-          ))}
-        </motion.div>
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-center">
+            <button
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="rounded bg-deep px-3 py-1 font-pixel text-[9px] text-sky hover:text-noodle"
+            >
+              {showAdvanced ? "◀ Show 3 Classic Cards" : "✨ Show All 5 Strategies"}
+            </button>
+          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`grid gap-4 py-2 sm:gap-6 ${
+              showAdvanced ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5" : "grid-cols-1 sm:grid-cols-3"
+            }`}
+          >
+            {cardsToDisplay.map((id, i) => (
+              <motion.div
+                key={id}
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: i * 0.08 }}
+              >
+                <StrategyCard info={STRATEGY_INFO[id]} hideVerdict onClick={() => choose(id)} />
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       ) : (
         <>
           <DiningTable sim={sim}>
@@ -97,22 +122,37 @@ export function Level3() {
               <StarRow stars={3} />
               <div className="flex flex-wrap justify-center gap-4 pt-2">
                 <button className="px-btn" style={{ "--btn": "#f6ecd2" } as React.CSSProperties} onClick={retry}>
-                  ↺ Other card
+                  ↺ Other strategy
                 </button>
                 <NextButton id={3} />
               </div>
             </Banner>
-            <Banner show={lost} tone="red" title={sim.deadlock ? "DEADLOCK!" : "STARVATION!"} icon={sim.deadlock ? "🔒" : "💀"}>
-              <button className="px-btn" style={{ "--btn": "#ffd23f" } as React.CSSProperties} onClick={retry}>
-                ↺ Pick again
-              </button>
+            <Banner
+              show={lost}
+              tone="red"
+              title={sim.deadlock ? "DEADLOCK!" : "STARVATION!"}
+              icon={sim.deadlock ? "🔒" : "💀"}
+            >
+              <div className="text-[19px] text-noodle font-pixel">The table stalled!</div>
+              <div className="pt-2">
+                <button className="px-btn" style={{ "--btn": "#f6ecd2" } as React.CSSProperties} onClick={retry}>
+                  ↺ Try another card
+                </button>
+              </div>
             </Banner>
           </DiningTable>
-          {won && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <CoffmanBadges broken={STRATEGY_INFO[pick].breaks} />
-            </motion.div>
-          )}
+          <div className="flex flex-wrap items-center justify-between gap-3 px-2">
+            <div className="flex items-center gap-2 font-pixel text-[10px]">
+              <span className="text-dim">ACTIVE STRATEGY:</span>
+              <span className="text-noodle">{STRATEGY_INFO[pick].name}</span>
+            </div>
+            <button
+              onClick={retry}
+              className="rounded bg-deep px-3 py-1 font-pixel text-[9px] text-dim hover:text-noodle"
+            >
+              ↺ Change Strategy
+            </button>
+          </div>
         </>
       )}
     </LevelShell>

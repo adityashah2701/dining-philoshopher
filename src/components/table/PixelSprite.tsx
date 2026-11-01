@@ -8,7 +8,7 @@ interface Props {
   y?: number;
 }
 
-/** Renders a char-grid sprite as SVG rects, merging horizontal runs. */
+// pixel sprite
 export const PixelSprite = memo(function PixelSprite({ rows, colors, px = 4, x = 0, y = 0 }: Props) {
   const rects: React.ReactElement[] = [];
   rows.forEach((row, r) => {
